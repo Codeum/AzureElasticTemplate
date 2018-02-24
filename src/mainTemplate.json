@@ -1098,7 +1098,7 @@
       },
       "dataLoadBalancerBackEndPools": "[variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools]",
       "loadBalancerBackEndPools": "[variables('lbBackEndPoolsAdded').backendPools]",
-      "enableAnonymousAccess": "[if(or(equals(parameters('esEnableAnonymousAccess'), 'Yes'), and(equals(parameters('loadBalancerType'), 'gateway'), equals(parameters('xpackPlugins')), 'Yes')), 'Yes', 'No')]"
+      "enableAnonymousAccess": "[if(equals(parameters('esEnableAnonymousAccess'), 'Yes'))]"
     },
     "networkSettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
