@@ -146,13 +146,6 @@ Check out our [examples repository](https://github.com/elastic/azure-marketplace
   <tr><td>kibanaKeyPassphrase</td><td>securestring</td>
     <td>The passphrase to decrypt the private key. Optional as the key may not be encrypted. Supported only in 5.3.0+</td><td><code>""</code></td></tr>
 
-  <tr><td>jumpbox</td><td>string</td>
-    <td>Either <code>Yes</code> or <code>No</code> to optionally add a virtual machine with a public IP to the deployment, which you can use to connect and manage virtual machines on the internal network.
-    <br /><br />
-    NOTE: If you are deploying Kibana, the Kibana virtual machine can act
-    as a jumpbox.
-  </td><td><code>No</code></td></tr>
-
   <tr><td>vmHostNamePrefix</td><td>string</td>
     <td>The prefix to use for hostnames when naming virtual machines in the cluster. Hostnames are used for resolution of master nodes on the network, so if you are deploying a cluster into an existing virtual network containing an existing Elasticsearch cluster, be sure to set this to a unique prefix, to differentiate the hostnames of this cluster from an existing cluster. Can be up to 5 characters in length, must begin with an alphanumeric character and can contain alphanumeric and hyphen characters.
     </td><td><code>""</code></td></tr>

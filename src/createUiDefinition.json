@@ -212,7 +212,7 @@
         "bladeTitle": "Nodes Configuration",
         "elements": [
           {
-            "name": "vmHostNamePrefix",
+            "name": "namespacePrefix",
             "type": "Microsoft.Common.TextBox",
             "label": "Hostname prefix",
             "defaultValue": "",
@@ -850,25 +850,6 @@
             "count": "1"
           },
           {
-            "name": "jumpbox",
-            "type": "Microsoft.Common.OptionsGroup",
-            "label": "Use a jump box?",
-            "defaultValue": "No",
-            "toolTip": "A jump box allows you to connect to your cluster from a public access point like SSH. This is usually not necessary if Kibana is installed, since Kibana itself acts as a jump box.",
-            "constraints": {
-              "allowedValues": [
-                {
-                  "label": "Yes",
-                  "value": "Yes"
-                },
-                {
-                  "label": "No",
-                  "value": "No"
-                }
-              ]
-            }
-          },
-          {
             "name": "loadBalancerType",
             "type": "Microsoft.Common.OptionsGroup",
             "label": "Load balancer type",
@@ -1042,14 +1023,13 @@
       "kibanaKeyBlob": "",
       "kibanaCertBlob": "",
       "kibanaKeyPassphrase": "",
-      "jumpbox": "[steps('externalAccessStep').jumpbox]",
       "vmSizeDataNodes": "[steps('nodesStep').dataNodes.vmSizeDataNodes]",
       "vmDataDiskCount": 40,
       "vmDataDiskSize": "Large",
       "vmDataNodeCount": "[steps('nodesStep').dataNodes.vmDataNodeCount]",
       "storageAccountType": "Default",
       "dataNodesAreMasterEligible": "[steps('nodesStep').dataNodes.dataNodesAreMasterEligible]",
-      "vmHostNamePrefix": "[steps('nodesStep').vmHostNamePrefix]",
+      "namespacePrefix": "[steps('nodesStep').namespacePrefix]",
       "vmSizeMasterNodes": "[steps('nodesStep').masterNodes.vmSizeMasterNodes]",
       "vmClientNodeCount": "[steps('nodesStep').clientNodes.vmClientNodeCount]",
       "vmSizeClientNodes": "[steps('nodesStep').clientNodes.vmSizeClientNodes]",

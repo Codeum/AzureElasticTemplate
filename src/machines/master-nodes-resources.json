@@ -31,7 +31,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "[concat(variables('namespace'), 'av-set')]",
+      "name": "[concat(variables('namespace'), 'as')]",
       "location": "[parameters('vm').shared.location]",
       "tags": {
         "provider": "[toUpper(parameters('elasticTags').provider)]"
@@ -42,11 +42,11 @@
       }
     },
     {
-      "name": "[concat(variables('namespace'), copyindex(), '-vm-creation')]",
+      "name": "[concat(variables('namespace'), 'vm-creation', copyindex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn" : [
-        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'av-set')]"
+        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'as')]"
       ],
       "copy": {
         "name": "[concat(variables('namespace'),'vm-creation-loop')]",
@@ -66,7 +66,7 @@
             "value": "[parameters('vm')]"
           },
           "availabilitySet": {
-            "value": "[concat(variables('namespace'), 'av-set')]"
+            "value": "[concat(variables('namespace'), 'as')]"
           },
           "index": {
             "value": "[copyindex()]"

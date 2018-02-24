@@ -46,7 +46,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "[concat(variables('namespace'), copyindex(), '-av-set')]",
+      "name": "[concat(variables('namespace'), 'as', copyindex())]",
       "location": "[parameters('vm').shared.location]",
       "tags": {
         "provider": "[toUpper(parameters('elasticTags').provider)]"
@@ -80,11 +80,11 @@
       }
     },
     {
-      "name": "[concat(variables('namespace'), copyindex(), '-vm-creation')]",
+      "name": "[concat(variables('namespace'), 'vm-creation', copyindex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn" : [
-        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), mod(copyindex(),variables('avSetCount')), '-av-set')]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'as', mod(copyindex(),variables('avSetCount')))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountPrefix')[mod(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),add(1,div(copyIndex(),variables('nodesPerStorageAccount'))))]"
       ],
       "copy": {
@@ -108,7 +108,7 @@
             "value": "[copyindex()]"
           },
           "availabilitySet": {
-            "value": "[concat(variables('namespace'), mod(copyindex(),variables('avSetCount')), '-av-set')]"
+            "value": "[concat(variables('namespace'), 'as', mod(copyindex(),variables('avSetCount')))]"
           },
           "dataDisks": {
             "value" : {
@@ -118,7 +118,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 0,
                   "vhd": {
-                    "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/',concat(variables('storageAccountPrefix')[mod(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),add(1,div(copyIndex(),variables('nodesPerStorageAccount'))))), '2016-01-01').primaryEndpoints.blob, 'vhds/', variables('namespace'), copyindex(),'-data-disk_INDEX_' ,'.vhd')]"
+                    "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/',concat(variables('storageAccountPrefix')[mod(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),add(1,div(copyIndex(),variables('nodesPerStorageAccount'))))), '2016-01-01').primaryEndpoints.blob, 'vhds/', variables('namespace'), 'vm', copyindex(),'-data-disk_INDEX_' ,'.vhd')]"
                   },
                   "caching": "None",
                   "createOption": "Empty"

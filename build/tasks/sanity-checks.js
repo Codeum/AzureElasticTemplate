@@ -79,7 +79,6 @@ function checks(cb) {
 
   marketPlaceArmParity();
   outputDiff("kibana", "machines/kibana-resources.json", "empty/empty-kibana-resources.json");
-  outputDiff("jumpbox", "machines/jumpbox-resources.json", "empty/empty-jumpbox-resources.json");
   parametersParity();
 
   filereader.readFiles('../src/', filter, resourcesHaveProviderTag);

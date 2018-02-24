@@ -74,17 +74,16 @@
   },
   "variables": {
     "namespace": "[parameters('namespace')]",
+    "computername": "[concat(parameters('vm').namespace, 'vm')]",
     "subnetId": "[concat(resourceId(parameters('networkSettings').resourceGroup, 'Microsoft.Network/virtualNetworks', parameters('networkSettings').name), '/subnets/', parameters('networkSettings').subnet.name)]",
-    "publicIpName": "[concat(variables('namespace'), '-ip')]",
-    "securityGroupName": "[concat(variables('namespace'), '-nsg')]",
-    "nicName": "[concat(variables('namespace'), '-nic')]",
+    "nicName": "[concat(variables('computername'), '-nic')]",
     "password_osProfile": {
-      "computername": "[parameters('namespace')]",
+      "computername": "[parameters('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
       "adminPassword": "[parameters('credentials').password]"
     },
     "sshPublicKey_osProfile": {
-      "computername": "[parameters('namespace')]",
+      "computername": "[parameters('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
       "linuxConfiguration": {
         "disablePasswordAuthentication": "true",
@@ -106,62 +105,6 @@
   "resources": [
     {
       "apiVersion": "2016-03-30",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('securityGroupName')]",
-      "location": "[parameters('location')]",
-      "tags": {
-        "provider": "[toUpper(parameters('elasticTags').provider)]"
-      },
-      "properties": {
-        "securityRules": [
-          {
-            "name": "SSH",
-            "properties": {
-              "description": "Allows inbound SSH traffic from anyone",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "[parameters('osSettings').managementPort]",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Kibana",
-            "properties": {
-              "description": "Allows inbound Kibana HTTP traffic from anyone",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5601",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 200,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2016-03-30",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIpName')]",
-      "location": "[parameters('location')]",
-      "tags": {
-        "provider": "[toUpper(parameters('elasticTags').provider)]"
-      },
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[concat('kb-', uniqueString(resourceGroup().id))]"
-      }
-      }
-    },
-    {
-      "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
@@ -169,8 +112,6 @@
         "provider": "[toUpper(parameters('elasticTags').provider)]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -178,24 +119,18 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIpName'))]"
-              },
               "subnet": {
                 "id": "[variables('subnetId')]"
               }
             }
           }
-        ],
-        "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
-        }
+        ]
       }
     },
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('namespace')]",
+      "name": "[parameters('computername')]",
       "location": "[parameters('location')]",
       "tags": {
         "provider": "[toUpper(parameters('elasticTags').provider)]"
@@ -213,7 +148,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob, 'vhds/', parameters('namespace'), '-osdisk.vhd')]"
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob, 'vhds/', parameters('computername'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -230,21 +165,15 @@
       "resources": [
         {
           "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(variables('namespace'), '/script')]",
+          "name": "[concat(variables('computername'), '/script')]",
           "apiVersion": "2016-03-30",
           "location": "[parameters('location')]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('namespace'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('computername'))]"
           ],
           "properties": "[parameters('osSettings').extensionSettings.kibana]"
         }
       ]
     }
-  ],
-  "outputs": {
-    "fqdn": {
-      "value": "[concat(variables('https'), reference(variables('publicIpName')).dnsSettings.fqdn, ':5601')]",
-      "type": "string"
-    }
-  }
+  ]
 }
