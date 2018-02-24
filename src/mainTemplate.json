@@ -143,7 +143,7 @@
       "type": "string",
       "defaultValue": "Standard_A2",
       "allowedValues": [
-        "Standard_B2S",
+        
         "Standard_A2",
         "Standard_A3",
         "Standard_A4",
@@ -233,6 +233,8 @@
       "type": "string",
       "defaultValue": "Standard_D1",
       "allowedValues": [
+        "Standard_D2S_v3",
+        "Standard_B2S",
         "Standard_A0",
         "Standard_A1",
         "Standard_A2",
@@ -277,7 +279,6 @@
         "Standard_DS13_v2",
         "Standard_DS14_v2",
         "Standard_DS15_v2",
-        "Standard_D2S_v3",
         "Standard_F1",
         "Standard_F2",
         "Standard_F4",
@@ -356,6 +357,8 @@
       "type": "string",
       "defaultValue": "Standard_D1",
       "allowedValues": [
+        "Standard_D2S_v3",
+        "Standard_B2S",
         "Standard_A0",
         "Standard_A1",
         "Standard_A2",
@@ -427,6 +430,8 @@
       "type": "string",
       "defaultValue": "Standard_D1",
       "allowedValues": [
+        "Standard_D2S_v3",
+        "Standard_B2S",
         "Standard_A0",
         "Standard_A1",
         "Standard_A2",
