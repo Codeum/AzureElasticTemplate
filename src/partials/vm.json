@@ -47,7 +47,7 @@
   },
   "variables": {
     "namespace" : "[parameters('vm').namespace]",
-    "computername": "[concat(parameters('vm').namespace, 'vm', parameters('index'))]",
+    "computername": "[concat(parameters('vm').namespace, 'vmm', parameters('index'))]",
     "password_osProfile": {
       "computername": "[variables('computername')]",
       "adminUsername": "[parameters('vm').shared.credentials.adminUsername]",
