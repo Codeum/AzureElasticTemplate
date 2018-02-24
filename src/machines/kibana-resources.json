@@ -130,7 +130,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('computername')]",
+      "name": "[variables('computername')]",
       "location": "[parameters('location')]",
       "tags": {
         "provider": "[toUpper(parameters('elasticTags').provider)]"
@@ -148,7 +148,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob, 'vhds/', parameters('computername'), '-osdisk.vhd')]"
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob, 'vhds/', variables('computername'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -169,7 +169,7 @@
           "apiVersion": "2016-03-30",
           "location": "[parameters('location')]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('computername'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', variables('computername'))]"
           ],
           "properties": "[parameters('osSettings').extensionSettings.kibana]"
         }
