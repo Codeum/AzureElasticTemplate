@@ -78,12 +78,12 @@
     "subnetId": "[concat(resourceId(parameters('networkSettings').resourceGroup, 'Microsoft.Network/virtualNetworks', parameters('networkSettings').name), '/subnets/', parameters('networkSettings').subnet.name)]",
     "nicName": "[concat(variables('computername'), '-nic')]",
     "password_osProfile": {
-      "computername": "[parameters('computername')]",
+      "computername": "[variables('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
       "adminPassword": "[parameters('credentials').password]"
     },
     "sshPublicKey_osProfile": {
-      "computername": "[parameters('computername')]",
+      "computername": "[variables('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
       "linuxConfiguration": {
         "disablePasswordAuthentication": "true",
