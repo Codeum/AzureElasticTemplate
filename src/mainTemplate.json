@@ -1215,7 +1215,7 @@
     },
     {
       "condition": "[equals(parameters('esCreateCluster'), 'Yes')]",
-      "name": "virtual-machines",
+      "name": "virtual-machines-cluter",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
