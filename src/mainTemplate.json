@@ -29,17 +29,6 @@
         "description": "Elasticsearch version to install"
       }
     },
-    "esCreateCluster": {
-      "type": "string",
-      "allowedValues": [
-        "Yes",
-        "No"
-      ],
-      "defaultValue": "No",
-      "metadata": {
-        "description": "Should a cluster be created"
-      }
-    },
     "esEnableAnonymousAccess": {
       "type": "string",
       "allowedValues": [
@@ -707,6 +696,8 @@
     }
   },
   "variables": {
+    "createCluster": "[greater(parameters('vmDataNodeCount'), 1)]",
+    "emptyArray": [],
     "templateBaseUrl": "[concat(parameters('artifactsBaseUrl'), '/')]",
     "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'partials/shared-resources.json')]",
     "networkTemplateUrl": "[concat(variables('templateBaseUrl'), 'networks/', if(equals(parameters('vNetNewOrExisting'), 'new'), if(equals(parameters('loadBalancerType'), 'gateway'), 'new-virtual-network-with-gateway', 'new-virtual-network'), 'existing-virtual-network'), '.json')]",
@@ -1077,7 +1068,6 @@
     "systemEnabledAnonymousAccess": "[if(and(equals(parameters('loadBalancerType'), 'gateway'), equals(parameters('xpackPlugins'), 'Yes')), 'Yes', 'No')]",
     "topologySettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
-      "createCluster": "[parameters('esCreateCluster')]",
       "dataNodesAreMasterEligible": "[parameters('dataNodesAreMasterEligible')]",
       "vmDataNodeCount": "[parameters('vmDataNodeCount')]",
       "vmSizeDataNodes": "[parameters('vmSizeDataNodes')]",
@@ -1098,8 +1088,8 @@
         "diskSize": "[variables('dataDiskSizes')[parameters('vmDataDiskSize')]]",
         "dataDisks": "[variables('numberOfDataDisks')]"
       },
-      "dataLoadBalancerBackEndPools": "[if(equals(parameters('esCreateCluster'), 'Yes'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, []]",
-      "loadBalancerBackEndPools": "[if(equals(parameters('esCreateCluster'), 'Yes'), variables('lbBackEndPoolsAdded').backendPools, []]",
+      "dataLoadBalancerBackEndPools": "[if(variables('createCluster'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, variables('emptyArray')]",
+      "loadBalancerBackEndPools": "[if(variables('createCluster'), variables('lbBackEndPoolsAdded').backendPools, variables('emptyArray')]",
       "enableAnonymousAccess": "[if(or(equals(parameters('esEnableAnonymousAccess'), 'Yes'), equals(variables('systemEnabledAnonymousAccess'), 'Yes')), 'Yes', 'No')]"
     },
     "networkSettings": {
@@ -1188,7 +1178,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('esCreateCluster'), 'Yes')]",
+      "condition": "[variables('createCluster')]",
       "name": "loadbalancer",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
@@ -1216,7 +1206,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('esCreateCluster'), 'Yes')]",
+      "condition": "[variables('createCluster')]",
       "name": "virtual-machines-cluter",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
@@ -1255,7 +1245,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('esCreateCluster'), 'No')]",
+      "condition": "[not(variables('createCluster'))]",
       "name": "virtual-machines",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
