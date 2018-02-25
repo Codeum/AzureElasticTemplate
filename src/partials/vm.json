@@ -70,7 +70,7 @@
   },
   "resources": [
     {
-      "condition": "[if(or(parameters('vm').shared.createCluster, not(contains(variables('computername'), 'data-vm0'))))]",
+      "condition": "[or(parameters('vm').shared.createCluster, not(contains(variables('computername'), 'data-vm0')))]",
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(variables('computername'), '-nic')]",
