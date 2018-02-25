@@ -1077,6 +1077,7 @@
     "systemEnabledAnonymousAccess": "[if(and(equals(parameters('loadBalancerType'), 'gateway'), equals(parameters('xpackPlugins'), 'Yes')), 'Yes', 'No')]",
     "topologySettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
+      "createCluster": "[parameters('esCreateCluster')]",
       "dataNodesAreMasterEligible": "[parameters('dataNodesAreMasterEligible')]",
       "vmDataNodeCount": "[parameters('vmDataNodeCount')]",
       "vmSizeDataNodes": "[parameters('vmSizeDataNodes')]",
@@ -1097,8 +1098,8 @@
         "diskSize": "[variables('dataDiskSizes')[parameters('vmDataDiskSize')]]",
         "dataDisks": "[variables('numberOfDataDisks')]"
       },
-      "dataLoadBalancerBackEndPools": "[variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools]",
-      "loadBalancerBackEndPools": "[variables('lbBackEndPoolsAdded').backendPools]",
+      "dataLoadBalancerBackEndPools": "[if(equals(parameters('esCreateCluster'), 'Yes'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, []]",
+      "loadBalancerBackEndPools": "[if(equals(parameters('esCreateCluster'), 'Yes'), variables('lbBackEndPoolsAdded').backendPools, []]",
       "enableAnonymousAccess": "[if(or(equals(parameters('esEnableAnonymousAccess'), 'Yes'), equals(variables('systemEnabledAnonymousAccess'), 'Yes')), 'Yes', 'No')]"
     },
     "networkSettings": {
