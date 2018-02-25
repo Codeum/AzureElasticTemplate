@@ -1088,7 +1088,7 @@
         "diskSize": "[variables('dataDiskSizes')[parameters('vmDataDiskSize')]]",
         "dataDisks": "[variables('numberOfDataDisks')]"
       },
-      "dataLoadBalancerBackEndPools": "[if(variables('createCluster'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, variables('emptyArray')]",
+      "dataLoadBalancerBackEndPools": "[if(variables('createCluster'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, variables('emptyArray'))]",
       "loadBalancerBackEndPools": "[if(variables('createCluster'), variables('lbBackEndPoolsAdded').backendPools, variables('emptyArray')]",
       "enableAnonymousAccess": "[if(or(equals(parameters('esEnableAnonymousAccess'), 'Yes'), equals(variables('systemEnabledAnonymousAccess'), 'Yes')), 'Yes', 'No')]"
     },
