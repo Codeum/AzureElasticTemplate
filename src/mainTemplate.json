@@ -1109,7 +1109,7 @@
       }
     },
     "commonVmSettings": {
-      "createCluster": "[variables(createCluster)]",
+      "createCluster": "[variables('createCluster')]",
       "namespacePrefix": "[parameters('namePrefix')]",
       "storageAccountName": "[concat(replace(parameters('namePrefix'), '-', ''), uniqueString(resourceGroup().id, deployment().name))]",
       "location": "[variables('location')]",
