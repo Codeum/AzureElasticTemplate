@@ -118,52 +118,6 @@
           }
         }
       }
-    },
-    {
-      "name": "kibana",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "dependsOn": [
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('kibanaTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "templateBaseUrl": {
-            "value": "[parameters('templateBaseUrl')]"
-          },
-          "storageAccountName": {
-            "value": "[parameters('commonVmSettings').storageAccountName]"
-          },
-          "credentials": {
-            "value": "[parameters('commonVmSettings').credentials]"
-          },
-          "location": {
-            "value": "[parameters('commonVmSettings').location]"
-          },
-          "namespace": {
-            "value": "[concat(parameters('commonVmSettings').namespacePrefix, 'kibana-')]"
-          },
-          "networkSettings": {
-            "value": "[parameters('networkSettings')]"
-          },
-          "osSettings": {
-            "value": "[parameters('osSettings')]"
-          },
-          "vmSize": {
-            "value": "[parameters('topologySettings').vmSizeKibana]"
-          },
-          "https": {
-            "value": "[parameters('topologySettings').kibanaHttps]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
-          }
-        }
-      }
     }
   ]
 }
