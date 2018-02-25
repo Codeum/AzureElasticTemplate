@@ -118,42 +118,7 @@
           }
         }
       }
-    },
-    {
-      "name": "data-nodes",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "dependsOn": [
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('dataTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "templateBaseUrl": { "value": "[parameters('templateBaseUrl')]" },
-          "vm": {
-            "value": {
-              "shared": "[parameters('commonVmSettings')]",
-              "namespace": "[concat(parameters('commonVmSettings').namespacePrefix, 'data-')]",
-              "installScript": "[parameters('osSettings').extensionSettings.data]",
-              "size": "[parameters('topologySettings').vmSizeDataNodes]",
-              "count": "[parameters('topologySettings').vmDataNodeCount]",
-              "useSharedStorageAccount": "No",
-              "useBackendPools": "Yes",
-              "backendPools": "[parameters('topologySettings').dataLoadBalancerBackEndPools]",
-              "imageReference": "[parameters('osSettings').imageReference]"
-            }
-          },
-          "storageSettings": {
-            "value": "[parameters('topologySettings').dataNodeStorageSettings]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
-          }
-        }
-      }
     }
+    
   ]
 }
