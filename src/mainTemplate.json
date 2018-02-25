@@ -1280,7 +1280,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', 'shared')]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('namePrefix'), 'data-vm0-nic')]"
       ],
       "properties": {
         "mode": "Incremental",
