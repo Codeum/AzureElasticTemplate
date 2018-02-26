@@ -88,7 +88,6 @@
         "storageProfile": {
           "imageReference": "[parameters('vm').imageReference]",
           "osDisk": {
-            "osType": "Linux",
             "name": "[concat(variables('computername'), '-osdisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage",
