@@ -132,19 +132,7 @@
             }
           ]
         }
-      },
-      "resources": [
-        {
-          "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(variables('computername'), '/script')]",
-          "apiVersion": "2017-12-01",
-          "location": "[parameters('location')]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('computername'))]"
-          ],
-          "properties": "[parameters('osSettings').extensionSettings.kibana]"
-        }
-      ]
+      }
     }
   ]
 }
