@@ -9,15 +9,6 @@
         "artifactsBaseUrl": "Base URL of the Elastic template gallery package"
       }
     },
-    "elasticTags": {
-      "type": "object",
-      "defaultValue": {
-        "provider": "648D2193-0CE0-4EFB-8A82-AF9792184FD9"
-      },
-      "metadata": {
-        "description": "A unique identifier to allow the Azure Infrastructure to understand the origin of resources deployed to Azure. You do not need to supply a value for this."
-      }
-    },
     "esVersion": {
       "type": "string",
       "defaultValue": "6.2.2",
@@ -57,32 +48,6 @@
       ],
       "metadata": {
         "description": "Set up an internal or external load balancer, or use Application Gateway (gateway) for load balancing and SSL offload. If you are setting up Elasticsearch on a publicly available endpoint, it is *strongly recommended* to secure your nodes with a product like Elastic's X-Pack Security"
-      }
-    },
-    "azureCloudPlugin": {
-      "type": "string",
-      "allowedValues": [
-        "Yes",
-        "No"
-      ],
-      "defaultValue": "No",
-      "metadata": {
-        "description": "Choose whether to install Azure Cloud plugin. The plugin allows an existing Azure storage account to be used for snapshot and restore"
-      }
-    },
-    "azureCloudStorageAccountName": {
-      "type": "string",
-      "defaultValue": "",
-      "maxLength": 24,
-      "metadata": {
-        "description": "The name of an existing storage account to use for snapshots with Azure Cloud plugin. Must be between 3 and 24 alphanumeric lowercase or characters or numbers."
-      }
-    },
-    "azureCloudStorageAccountKey": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The access key of an existing storage account to use for snapshots with Azure Cloud plugin"
       }
     },
     "xpackPlugins": {
@@ -131,62 +96,6 @@
     "vmSizeKibana": {
       "type": "string",
       "defaultValue": "Standard_A2",
-      "allowedValues": [
-        "Standard_D2S_v3",
-        "Standard_B2S",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4",
-        "Standard_A5",
-        "Standard_A6",
-        "Standard_A7",
-        "Standard_D1",
-        "Standard_D2",
-        "Standard_D3",
-        "Standard_D4",
-        "Standard_D11",
-        "Standard_D12",
-        "Standard_D13",
-        "Standard_D14",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D11_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2",
-        "Standard_D14_v2",
-        "Standard_D15_v2",
-        "Standard_DS1",
-        "Standard_DS2",
-        "Standard_DS3",
-        "Standard_DS4",
-        "Standard_DS11",
-        "Standard_DS12",
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS1_v2",
-        "Standard_DS2_v2",
-        "Standard_DS3_v2",
-        "Standard_DS4_v2",
-        "Standard_DS5_v2",
-        "Standard_DS11_v2",
-        "Standard_DS12_v2",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_F1",
-        "Standard_F2",
-        "Standard_F4",
-        "Standard_F8",
-        "Standard_F16",
-        "Standard_F1s",
-        "Standard_F2s",
-        "Standard_F4s",
-        "Standard_F8s",
-        "Standard_F16s"
-      ],
       "metadata": {
         "description": "Size of the Kibana node"
       }
@@ -222,64 +131,6 @@
     "vmSizeDataNodes": {
       "type": "string",
       "defaultValue": "Standard_D1",
-      "allowedValues": [
-        "Standard_D2S_v3",
-        "Standard_B2S",
-        "Standard_A0",
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4",
-        "Standard_A5",
-        "Standard_A6",
-        "Standard_A7",
-        "Standard_D1",
-        "Standard_D2",
-        "Standard_D3",
-        "Standard_D4",
-        "Standard_D11",
-        "Standard_D12",
-        "Standard_D13",
-        "Standard_D14",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D11_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2",
-        "Standard_D14_v2",
-        "Standard_D15_v2",
-        "Standard_DS1",
-        "Standard_DS2",
-        "Standard_DS3",
-        "Standard_DS4",
-        "Standard_DS11",
-        "Standard_DS12",
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS1_v2",
-        "Standard_DS2_v2",
-        "Standard_DS3_v2",
-        "Standard_DS4_v2",
-        "Standard_DS5_v2",
-        "Standard_DS11_v2",
-        "Standard_DS12_v2",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_F1",
-        "Standard_F2",
-        "Standard_F4",
-        "Standard_F8",
-        "Standard_F16",
-        "Standard_F1s",
-        "Standard_F2s",
-        "Standard_F4s",
-        "Standard_F8s",
-        "Standard_F16s"
-      ],
       "metadata": {
         "description": "Size of the Elasticsearch data nodes"
       }
@@ -346,64 +197,6 @@
     "vmSizeMasterNodes": {
       "type": "string",
       "defaultValue": "Standard_D1",
-      "allowedValues": [
-        "Standard_D2S_v3",
-        "Standard_B2S",
-        "Standard_A0",
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4",
-        "Standard_A5",
-        "Standard_A6",
-        "Standard_A7",
-        "Standard_D1",
-        "Standard_D2",
-        "Standard_D3",
-        "Standard_D4",
-        "Standard_D11",
-        "Standard_D12",
-        "Standard_D13",
-        "Standard_D14",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D11_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2",
-        "Standard_D14_v2",
-        "Standard_D15_v2",
-        "Standard_DS1",
-        "Standard_DS2",
-        "Standard_DS3",
-        "Standard_DS4",
-        "Standard_DS11",
-        "Standard_DS12",
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS1_v2",
-        "Standard_DS2_v2",
-        "Standard_DS3_v2",
-        "Standard_DS4_v2",
-        "Standard_DS5_v2",
-        "Standard_DS11_v2",
-        "Standard_DS12_v2",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_F1",
-        "Standard_F2",
-        "Standard_F4",
-        "Standard_F8",
-        "Standard_F16",
-        "Standard_F1s",
-        "Standard_F2s",
-        "Standard_F4s",
-        "Standard_F8s",
-        "Standard_F16s"
-      ],
       "metadata": {
         "description": "Size of the Elasticsearch master nodes, if data nodes are not master eligible, 3 master nodes of this size will be provisioned"
       }
@@ -419,64 +212,6 @@
     "vmSizeClientNodes": {
       "type": "string",
       "defaultValue": "Standard_D1",
-      "allowedValues": [
-        "Standard_D2S_v3",
-        "Standard_B2S",
-        "Standard_A0",
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4",
-        "Standard_A5",
-        "Standard_A6",
-        "Standard_A7",
-        "Standard_D1",
-        "Standard_D2",
-        "Standard_D3",
-        "Standard_D4",
-        "Standard_D11",
-        "Standard_D12",
-        "Standard_D13",
-        "Standard_D14",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D11_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2",
-        "Standard_D14_v2",
-        "Standard_D15_v2",
-        "Standard_DS1",
-        "Standard_DS2",
-        "Standard_DS3",
-        "Standard_DS4",
-        "Standard_DS11",
-        "Standard_DS12",
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS1_v2",
-        "Standard_DS2_v2",
-        "Standard_DS3_v2",
-        "Standard_DS4_v2",
-        "Standard_DS5_v2",
-        "Standard_DS11_v2",
-        "Standard_DS12_v2",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_F1",
-        "Standard_F2",
-        "Standard_F4",
-        "Standard_F8",
-        "Standard_F16",
-        "Standard_F1s",
-        "Standard_F2s",
-        "Standard_F4s",
-        "Standard_F8s",
-        "Standard_F16s"
-      ],
       "metadata": {
         "description": "Size of the Elasticsearch client nodes"
       }
@@ -549,17 +284,6 @@
         "description": "Location where resources will be provisioned. By default, the template deploys the resources to the same location as the resource group. If specified, must be a valid Azure location e.g. 'australiasoutheast'"
       }
     },
-    "vNetNewOrExisting": {
-      "type": "string",
-      "defaultValue": "new",
-      "allowedValues": [
-        "new",
-        "existing"
-      ],
-      "metadata": {
-        "description": "Choose to create a new Virtual Network or use an existing one. If choosing an existing network, the subnet also needs to exist."
-      }
-    },
     "vNetName": {
       "type": "string",
       "defaultValue": "es-vnet",
@@ -567,7 +291,7 @@
         "description": "Virtual Network Name"
       }
     },
-    "vNetExistingResourceGroup": {
+    "vNetResourceGroup": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
@@ -700,7 +424,6 @@
     "emptyArray": [],
     "templateBaseUrl": "[concat(parameters('artifactsBaseUrl'), '/')]",
     "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'partials/shared-resources.json')]",
-    "networkTemplateUrl": "[concat(variables('templateBaseUrl'), 'networks/', if(equals(parameters('vNetNewOrExisting'), 'new'), if(equals(parameters('loadBalancerType'), 'gateway'), 'new-virtual-network-with-gateway', 'new-virtual-network'), 'existing-virtual-network'), '.json')]",
     "loadBalancerOptions": {
       "internal": "internal-lb-resources",
       "external": "external-lb-resources",
@@ -709,11 +432,6 @@
     "loadBalancerTemplateUrl": "[concat(variables('templateBaseUrl'), 'loadbalancers/', variables('loadBalancerOptions')[parameters('loadBalancerType')],'.json')]",
     "osSettingsTemplateUrl": "[concat(variables('templateBaseUrl'), 'settings/ubuntuSettings.json')]",
     "location": "[parameters('location')]",
-    "azureCloudStorageAccount": {
-      "name": "[parameters('azureCloudStorageAccountName')]",
-      "key": "[parameters('azureCloudStorageAccountKey')]",
-      "install": "[parameters('azureCloudPlugin')]"
-    },
     "esToKibanaMapping": {
       "6.2.1": "6.2.1",
       "6.2.2": "6.2.2"
@@ -731,10 +449,6 @@
       "securityLogstashPwd": "[parameters('securityLogstashPassword')]",
       "securityBootstrapPwd": "[if(not(empty(parameters('securityBootstrapPassword'))),parameters('securityBootstrapPassword'),uniqueString(resourceGroup().id, deployment().name, parameters('securityAdminPassword')))]",
       "kibanaVersion": "[variables('esToKibanaMapping')[parameters('esVersion')]]"
-    },
-    "networkResourceGroupMap": {
-      "new": "[resourceGroup().name]",
-      "existing": "[parameters('vNetExistingResourceGroup')]"
     },
     "dataSkuSettings": {
       "Standard_A0": {
@@ -1095,7 +809,7 @@
     "networkSettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
       "name": "[parameters('vNetName')]",
-      "resourceGroup": "[variables('networkResourceGroupMap')[parameters('vNetNewOrExisting')]]",
+      "resourceGroup": "[parameters('vNetResourceGroup')]",
       "location": "[variables('location')]",
       "addressPrefix": "[parameters('vNetNewAddressPrefix')]",
       "subnet": {
@@ -1111,7 +825,6 @@
     "commonVmSettings": {
       "createCluster": "[variables('createCluster')]",
       "namespacePrefix": "[parameters('namePrefix')]",
-      "storageAccountName": "[concat(replace(parameters('namePrefix'), '-', ''), uniqueString(resourceGroup().id, deployment().name))]",
       "location": "[variables('location')]",
       "subnet": "[variables('networkSettings').subnet]",
       "subnetId": "[concat(resourceId(variables('networkSettings').resourceGroup, 'Microsoft.Network/virtualNetworks', variables('networkSettings').name), '/subnets/', variables('networkSettings').subnet.name)]",
@@ -1135,56 +848,11 @@
   },
   "resources": [
     {
-      "name": "shared",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('sharedTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "location": {
-            "value": "[variables('location')]"
-          },
-          "storageAccountName": {
-            "value": "[variables('commonVmSettings').storageAccountName]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
-          }
-        }
-      }
-    },
-    {
-      "condition": "[equals(parameters('vNetNewOrExisting'), 'new')]",
-      "name": "network",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('networkTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "networkSettings": {
-            "value": "[variables('networkSettings')]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
-          }
-        }
-      }
-    },
-    {
       "condition": "[variables('createCluster')]",
       "name": "loadbalancer",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'network')]"
       ],
       "properties": {
@@ -1199,9 +867,6 @@
           },
           "applicationGatewaySettings": {
             "value": "[variables('applicationGatewaySettings')]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }
@@ -1235,12 +900,6 @@
           },
           "networkSettings": {
             "value": "[variables('networkSettings')]"
-          },
-          "azureCloudStorageAccount": {
-            "value": "[variables('azureCloudStorageAccount')]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }
@@ -1252,12 +911,8 @@
       "name": "[concat(parameters('namePrefix'), 'data-vm0-nic')]",
       "location": "[variables('commonVmSettings').location]",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'network')]"
       ],
-      "tags": {
-        "provider": "[toUpper(parameters('elasticTags').provider)]"
-      },
       "properties": {
         "ipConfigurations": [
           {
@@ -1303,12 +958,6 @@
           },
           "networkSettings": {
             "value": "[variables('networkSettings')]"
-          },
-          "azureCloudStorageAccount": {
-            "value": "[variables('azureCloudStorageAccount')]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }

@@ -31,15 +31,6 @@
       "metadata": {
         "description": "Network settings"
       }
-    },
-    "elasticTags": {
-      "type": "object",
-      "defaultValue": {
-        "provider": "648D2193-0CE0-4EFB-8A82-AF9792184FD9"
-      },
-      "metadata": {
-        "description": "A unique identifier to allow the Azure Infrastructure to understand the origin of resources deployed to Azure. You do not need to supply a value for this."
-      }
     }
   },
   "variables": {
@@ -78,9 +69,6 @@
               "backendPools": [],
               "imageReference": "[parameters('osSettings').imageReference]"
             }
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }
@@ -112,9 +100,6 @@
               "backendPools": "[parameters('topologySettings').loadBalancerBackEndPools]",
               "imageReference": "[parameters('osSettings').imageReference]"
             }
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }
@@ -148,9 +133,6 @@
           },
           "storageSettings": {
             "value": "[parameters('topologySettings').dataNodeStorageSettings]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }
@@ -170,9 +152,6 @@
         "parameters": {
           "templateBaseUrl": {
             "value": "[parameters('templateBaseUrl')]"
-          },
-          "storageAccountName": {
-            "value": "[parameters('commonVmSettings').storageAccountName]"
           },
           "credentials": {
             "value": "[parameters('commonVmSettings').credentials]"
@@ -194,9 +173,6 @@
           },
           "https": {
             "value": "[parameters('topologySettings').kibanaHttps]"
-          },
-          "elasticTags": {
-            "value": "[parameters('elasticTags')]"
           }
         }
       }

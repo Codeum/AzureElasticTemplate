@@ -26,12 +26,6 @@
         "description": "Network settings"
       }
     },
-    "storageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Existing Storage Account where the Virtual Machine's disks will be placed"
-      }
-    },
     "credentials": {
       "type": "secureObject",
       "metadata": {
@@ -60,15 +54,6 @@
       ],
       "metadata": {
         "description": "Controls if the output address should be HTTP or HTTPS"
-      }
-    },
-    "elasticTags": {
-      "type": "object",
-      "defaultValue": {
-        "provider": "648D2193-0CE0-4EFB-8A82-AF9792184FD9"
-      },
-      "metadata": {
-        "description": "A unique identifier to allow the Azure Infrastructure to understand the origin of resources deployed to Azure. You do not need to supply a value for this."
       }
     }
   },
@@ -108,9 +93,6 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "provider": "[toUpper(parameters('elasticTags').provider)]"
-      },
       "dependsOn": [
       ],
       "properties": {
@@ -132,9 +114,6 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('computername')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "provider": "[toUpper(parameters('elasticTags').provider)]"
-      },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
@@ -147,9 +126,6 @@
           "imageReference": "[parameters('osSettings').imageReference]",
           "osDisk": {
             "name": "osdisk",
-            "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob, 'vhds/', variables('computername'), '-osdisk.vhd')]"
-            },
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
