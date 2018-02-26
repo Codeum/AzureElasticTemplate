@@ -98,7 +98,7 @@
       }
     },
     {
-      "apiVersion": "2016-04-30-preview",
+      "apiVersion": "2017-12-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('computername')]",
       "location": "[parameters('location')]",
@@ -129,6 +129,16 @@
           ]
         }
       }
-    }
+    },
+    { 
+      "type": "Microsoft.Compute/virtualMachines/extensions", 
+      "name": "[concat(variables('computername'), '/script')]", 
+      "apiVersion": "2017-12-01", 
+      "location": "[parameters('location')]", 
+      "dependsOn": [ 
+        "[concat('Microsoft.Compute/virtualMachines/', variables('computername'))]" 
+      ], 
+      "properties": "[parameters('osSettings').extensionSettings.kibana]" 
+    } 
   ]
 }
