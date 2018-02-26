@@ -42,7 +42,7 @@
       "condition": "[equals(parameters('topologySettings').dataNodesAreMasterEligible, 'No')]",
       "name": "master-nodes",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
+      "apiVersion": "2017-05-10",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -68,7 +68,7 @@
     {
       "name": "data-nodes",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
+      "apiVersion": "2017-05-10",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -98,7 +98,7 @@
       "condition": "[equals(parameters('topologySettings').kibana, 'Yes')]",
       "name": "kibana",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
+      "apiVersion": "2017-05-10",
       "dependsOn": [
       ],
       "properties": {

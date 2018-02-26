@@ -67,7 +67,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-12-01",
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[concat(variables('namespace'), 'as')]",
       "location": "[parameters('vm').shared.location]",
@@ -79,7 +79,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[concat(variables('storageAccountPrefix')[mod(copyIndex(),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(copyIndex(),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),copyIndex(1))]",
-      "apiVersion": "2016-01-01",
+      "apiVersion": "2017-10-01",
       "location": "[parameters('vm').shared.location]",
       "copy": {
         "name": "[concat(variables('namespace'),'storage-loop')]",
@@ -94,7 +94,7 @@
     {
       "name": "[concat(variables('namespace'), 'vm-creation', copyindex())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
+      "apiVersion": "2017-05-10",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'as')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountPrefix')[mod(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),add(1,div(copyIndex(),variables('nodesPerStorageAccount'))))]"

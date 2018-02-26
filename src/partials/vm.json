@@ -51,7 +51,7 @@
   "resources": [
     {
       "condition": "[or(parameters('vm').shared.createCluster, not(contains(variables('computername'), 'data-vm1')))]",
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-10-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(variables('computername'), '-nic')]",
       "location": "[parameters('vm').shared.location]",
@@ -73,7 +73,7 @@
       }
     },
     {
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-12-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('computername')]",
       "location": "[parameters('vm').shared.location]",
@@ -113,7 +113,7 @@
         {
           "type": "Microsoft.Compute/virtualMachines/extensions",
           "name": "[concat(variables('computername'), '/script')]",
-          "apiVersion": "2016-03-30",
+          "apiVersion": "2017-12-01",
           "location": "[parameters('vm').shared.location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', variables('computername'))]"

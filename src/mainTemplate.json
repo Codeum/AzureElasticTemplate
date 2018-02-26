@@ -384,7 +384,7 @@
         "diskSize": "[variables('dataDiskSizes')[parameters('vmDataDiskSize')]]",
         "dataDisks": "[variables('numberOfDataDisks')]"
       },
-      "dataLoadBalancerBackEndPools": "[variables('lbBackEndPools').backendPools)]",
+      "dataLoadBalancerBackEndPools": "[variables('lbBackEndPools').backendPools]",
       "enableAnonymousAccess": "[parameters('esEnableAnonymousAccess')]"
     },
     "networkSettings": {
@@ -414,7 +414,7 @@
       "condition": "[variables('createCluster')]",
       "name": "loadbalancer",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2017-05-10",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -430,7 +430,7 @@
     },
     {
       "condition": "[not(variables('createCluster'))]",
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2017-10-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(parameters('namespacePrefix'), 'data-vm1-nic')]",
       "location": "[variables('commonVmSettings').location]",
@@ -455,7 +455,7 @@
     {
       "name": "virtual-machines",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2017-05-10",
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('namespacePrefix'), 'data-vm1-nic')]"
