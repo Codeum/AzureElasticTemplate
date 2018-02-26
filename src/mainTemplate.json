@@ -307,7 +307,7 @@
     "lbBackEndPools": {
       "backendPools": "[variables('backendPoolConfigurations')[parameters('loadBalancerType')]]"
     },
-    "storageAccountType": "[variables('storageSettings').accountType]",
+    "storageAccountType": "Premium_LRS",
     "dataDiskSizes": {
       "Large": 1023,
       "Medium": 512,

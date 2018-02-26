@@ -121,7 +121,7 @@
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "managedDisk": {
-              "storageAccountType": "[variables('storageSettings').accountType]"
+              "storageAccountType": "Premium_LRS"
             }
           }
         },
