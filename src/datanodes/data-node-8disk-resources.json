@@ -69,7 +69,7 @@
             "value": {
               "disks": [
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk1')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk1')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 0,
                   "managedDisk": {
@@ -79,7 +79,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk2')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk2')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 1,
                   "managedDisk": {
@@ -89,7 +89,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk3')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk3')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 2,
                   "managedDisk": {
@@ -99,7 +99,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk4')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk4')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 3,
                   "managedDisk": {
@@ -109,7 +109,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk5')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk5')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 4,
                   "managedDisk": {
@@ -119,7 +119,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk6')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk6')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 5,
                   "managedDisk": {
@@ -129,7 +129,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk7')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk7')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 6,
                   "managedDisk": {
@@ -139,7 +139,7 @@
                   "createOption": "Empty"
                 },
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk8')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk8')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 7,
                   "managedDisk": {

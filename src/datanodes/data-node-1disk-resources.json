@@ -69,7 +69,7 @@
             "value": {
               "disks": [
                 {
-                  "name": "[concat(variables('namespace'), 'vm', copyindex() + 1,'-data-disk1')]",
+                  "name": "[concat(variables('namespace'), 'vm', add(copyindex(), 1),'-data-disk1')]",
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 0,
                   "managedDisk": {
