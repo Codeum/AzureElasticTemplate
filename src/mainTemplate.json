@@ -298,13 +298,6 @@
         "description": "The name of the resource group for the existing Virtual Network. Required when using an existing Virtual Network"
       }
     },
-    "vNetNewAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "The address prefix size to use for a New Virtual Network. Required when creating a new Virtual Network"
-      }
-    },
     "vNetLoadBalancerIp": {
       "type": "string",
       "defaultValue": "10.0.0.4",
@@ -318,116 +311,15 @@
       "metadata": {
         "description": "Subnet name to use for Elasticsearch nodes"
       }
-    },
-    "vNetNewClusterSubnetAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/25",
-      "metadata": {
-        "description": "The address space of the subnet. Required when creating a new Virtual Network"
-      }
-    },
-    "vNetAppGatewaySubnetName": {
-      "type": "string",
-      "defaultValue": "es-gateway",
-      "metadata": {
-        "description": "Subnet name to use for the Application Gateway. Required when selecting Application Gateway for load balancing"
-      }
-    },
-    "vNetNewAppGatewaySubnetAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.128/28",
-      "metadata": {
-        "description": "The address space of the Application Gateway subnet. Required when creating a new Virtual Network and selecting Application Gateway for load balancing"
-      }
-    },
-    "appGatewayTier": {
-      "type": "string",
-      "defaultValue": "Standard",
-      "allowedValues": [
-        "Standard",
-        "WAF"
-      ],
-      "metadata": {
-        "description": "The tier of the Application Gateway. Required when selecting Application Gateway for load balancing"
-      }
-    },
-    "appGatewaySku": {
-      "type": "string",
-      "defaultValue": "Medium",
-      "allowedValues": [
-        "Small",
-        "Medium",
-        "Large"
-      ],
-      "metadata": {
-        "description": "The size of the Application Gateway. Medium or above is recommended for Production clusters, and required when using WAF tier"
-      }
-    },
-    "appGatewayCount": {
-      "type": "int",
-      "defaultValue": 2,
-      "allowedValues": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10
-      ],
-      "metadata": {
-        "description": "The number of instances of the Application Gateway. A minimum of 2 is recommended for Production clusters. Required when selecting Application Gateway for load balancing"
-      }
-    },
-    "appGatewayCertBlob": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "A Base-64 encoded form of the PFX certificate for the Application Gateway. This certificate is used to secure HTTPS connections to the Application Gateway"
-      }
-    },
-    "appGatewayCertPassword": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The password for the PFX certificate for the Application Gateway."
-      }
-    },
-    "appGatewayWafStatus": {
-      "type": "string",
-      "defaultValue": "Enabled",
-      "allowedValues": [
-        "Enabled",
-        "Disabled"
-      ],
-      "metadata": {
-        "description": "The firewall status of the Application Gateway. Required when selecting Application Gateway for load balancing and using WAF tier."
-      }
-    },
-    "appGatewayWafMode": {
-      "type": "string",
-      "defaultValue": "Detection",
-      "allowedValues": [
-        "Detection",
-        "Prevention"
-      ],
-      "metadata": {
-        "description": "The firewall mode of the Application Gateway. Required when selecting Application Gateway for load balancing and using WAF tier."
-      }
     }
   },
   "variables": {
     "createCluster": "[greater(parameters('vmDataNodeCount'), 1)]",
     "emptyArray": [],
     "templateBaseUrl": "[concat(parameters('artifactsBaseUrl'), '/')]",
-    "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'partials/shared-resources.json')]",
     "loadBalancerOptions": {
       "internal": "internal-lb-resources",
-      "external": "external-lb-resources",
-      "gateway": "[concat(toLower(parameters('appGatewayTier')),'-application-gateway-resources')]"
+      "external": "external-lb-resources"
     },
     "loadBalancerTemplateUrl": "[concat(variables('templateBaseUrl'), 'loadbalancers/', variables('loadBalancerOptions')[parameters('loadBalancerType')],'.json')]",
     "osSettingsTemplateUrl": "[concat(variables('templateBaseUrl'), 'settings/ubuntuSettings.json')]",
@@ -779,7 +671,6 @@
     "nodesPerStorageAccountDiv": "[div(add(add(1, variables('nodesPerStorageAccount')), int(replace(string(sub(1, variables('nodesPerStorageAccount'))), '-', ''))), 2)]",
     "storageAccountsCount": "[add(div(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')), mod(add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),2), add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),1)))]",
     "kibanaHttps": "[if(and(greater(length(parameters('kibanaKeyBlob')), 0), greater(length(parameters('kibanaCertBlob')), 0)), 'Yes', 'No')]",
-    "systemEnabledAnonymousAccess": "[if(and(equals(parameters('loadBalancerType'), 'gateway'), equals(parameters('xpackPlugins'), 'Yes')), 'Yes', 'No')]",
     "topologySettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
       "dataNodesAreMasterEligible": "[parameters('dataNodesAreMasterEligible')]",
@@ -804,22 +695,16 @@
       },
       "dataLoadBalancerBackEndPools": "[if(variables('createCluster'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, variables('emptyArray'))]",
       "loadBalancerBackEndPools": "[if(variables('createCluster'), variables('lbBackEndPoolsAdded').backendPools, variables('emptyArray'))]",
-      "enableAnonymousAccess": "[if(or(equals(parameters('esEnableAnonymousAccess'), 'Yes'), equals(variables('systemEnabledAnonymousAccess'), 'Yes')), 'Yes', 'No')]"
+      "enableAnonymousAccess": "[parameters('esEnableAnonymousAccess')]"
     },
     "networkSettings": {
       "namespacePrefix": "[parameters('namePrefix')]",
       "name": "[parameters('vNetName')]",
       "resourceGroup": "[parameters('vNetResourceGroup')]",
       "location": "[variables('location')]",
-      "addressPrefix": "[parameters('vNetNewAddressPrefix')]",
       "subnet": {
         "name": "[parameters('vNetClusterSubnetName')]",
-        "addressPrefix": "[parameters('vNetNewClusterSubnetAddressPrefix')]",
         "loadbalancerIp": "[parameters('vNetLoadBalancerIp')]"
-      },
-      "applicationGatewaySubnet": {
-        "name": "[parameters('vNetAppGatewaySubnetName')]",
-        "addressPrefix": "[parameters('vNetNewAppGatewaySubnetAddressPrefix')]"
       }
     },
     "commonVmSettings": {
@@ -834,16 +719,6 @@
         "authenticationType": "[parameters('authenticationType')]",
         "sshPublicKey": "[parameters('sshPublicKey')]"
       }
-    },
-    "applicationGatewaySettings": {
-      "namespacePrefix": "[parameters('namePrefix')]",
-      "skuName": "[concat(parameters('appGatewayTier'), '_', parameters('appGatewaySku'))]",
-      "tier": "[parameters('appGatewayTier')]",
-      "instanceCount": "[parameters('appGatewayCount')]",
-      "certBlob": "[parameters('appGatewayCertBlob')]",
-      "certPassword": "[parameters('appGatewayCertPassword')]",
-      "firewallStatus": "[parameters('appGatewayWafStatus')]",
-      "firewallMode": "[parameters('appGatewayWafMode')]"
     }
   },
   "resources": [
