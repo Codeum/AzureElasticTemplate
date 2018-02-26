@@ -65,10 +65,7 @@
     "osProfile": {
       "computername": "[variables('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
-      "adminPassword": "[parameters('credentials').password]",
-      "linuxConfiguration": {
-        "disablePasswordAuthentication": false
-      }
+      "adminPassword": "[parameters('credentials').password]"
     },
     "httpsOpts": {
       "Yes" : "https://",
@@ -101,7 +98,7 @@
       }
     },
     {
-      "apiVersion": "2017-12-01",
+      "apiVersion": "2016-04-30-preview",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('computername')]",
       "location": "[parameters('location')]",
