@@ -26,25 +26,18 @@
         "Yes",
         "No"
       ],
-      "defaultValue": "No",
+      "defaultValue": "Yes",
       "metadata": {
         "description": "Enable Anonymous Access"
       }
     },
-    "esClusterName": {
-      "type": "string",
-      "defaultValue": "elasticsearch",
-      "metadata": {
-        "description": "The name of the Elasticsearch cluster"
-      }
-    },
     "loadBalancerType": {
       "type": "string",
-      "defaultValue": "internal",
+      "defaultValue": "none",
       "allowedValues": [
         "internal",
         "external",
-        "gateway"
+        "none"
       ],
       "metadata": {
         "description": "Set up an internal or external load balancer, or use Application Gateway (gateway) for load balancing and SSL offload. If you are setting up Elasticsearch on a publicly available endpoint, it is *strongly recommended* to secure your nodes with a product like Elastic's X-Pack Security"
@@ -95,7 +88,7 @@
     },
     "vmSizeKibana": {
       "type": "string",
-      "defaultValue": "Standard_A2",
+      "defaultValue": "Standard_B2S",
       "metadata": {
         "description": "Size of the Kibana node"
       }
@@ -121,7 +114,7 @@
         "description": "The passphrase to decrypt the private key. Optional as the key may not be encrypted. Supported only in 5.3.0+"
       }
     },
-    "namePrefix": {
+    "namespacePrefix": {
       "type": "string",
       "defaultValue": "es-",
       "metadata": {
@@ -130,14 +123,14 @@
     },
     "vmSizeDataNodes": {
       "type": "string",
-      "defaultValue": "Standard_D1",
+      "defaultValue": "Standard_D2S_v3",
       "metadata": {
         "description": "Size of the Elasticsearch data nodes"
       }
     },
     "vmDataDiskCount": {
       "type": "int",
-      "defaultValue": 40,
+      "defaultValue": 1,
       "allowedValues": [
         0,
         1,
@@ -170,17 +163,6 @@
       "minValue": 1,
       "metadata": {
         "description": "Number of Elasticsearch data nodes"
-      }
-    },
-    "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Default",
-      "allowedValues": [
-        "Default",
-        "Standard"
-      ],
-      "metadata": {
-        "description": "The storage account type of the attached disks (Default or Standard). The Default storage account type will be Premium Storage for VMs that support Premium Storage and Standard Storage for those that do not."
       }
     },
     "dataNodesAreMasterEligible": {
@@ -222,29 +204,11 @@
         "description": "Admin username used when provisioning virtual machines"
       }
     },
-    "authenticationType": {
-      "type": "string",
-      "defaultValue": "password",
-      "allowedValues": [
-        "password",
-        "sshPublicKey"
-      ],
-      "metadata": {
-        "description": "Choose a password or ssh public key for the Admin username used to access virtual machines"
-      }
-    },
     "adminPassword": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
         "description": "Admin password"
-      }
-    },
-    "sshPublicKey": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Admin ssh public key"
       }
     },
     "securityBootstrapPassword": {
@@ -314,22 +278,56 @@
     }
   },
   "variables": {
-    "createCluster": "[greater(parameters('vmDataNodeCount'), 1)]",
-    "emptyArray": [],
+    "createCluster": "[not(equals(parameters('loadBalancerType'), 'none'))]",
     "templateBaseUrl": "[concat(parameters('artifactsBaseUrl'), '/')]",
+    "osSettingsTemplateUrl": "[concat(variables('templateBaseUrl'), 'settings/ubuntuSettings.json')]",
+
+    "location": "[parameters('location')]",
+
     "loadBalancerOptions": {
       "internal": "internal-lb-resources",
-      "external": "external-lb-resources"
+      "external": "external-lb-resources",
+      "none": "internal-lb-resources"
     },
     "loadBalancerTemplateUrl": "[concat(variables('templateBaseUrl'), 'loadbalancers/', variables('loadBalancerOptions')[parameters('loadBalancerType')],'.json')]",
-    "osSettingsTemplateUrl": "[concat(variables('templateBaseUrl'), 'settings/ubuntuSettings.json')]",
-    "location": "[parameters('location')]",
+    "backendPoolConfigurations": {
+      "internal": [
+        {
+          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namespacePrefix'), 'int-lb')),'/backendAddressPools/LBBE')]"
+        }
+      ],
+      "external": [
+        {
+          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namespacePrefix'), 'int-lb')),'/backendAddressPools/LBBE')]"
+        },
+        {
+          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namespacePrefix'), 'ext-lb')),'/backendAddressPools/LBBE')]"
+        }
+      ],
+      "none": []
+    },
+    "lbBackEndPools": {
+      "backendPools": "[variables('backendPoolConfigurations')[parameters('loadBalancerType')]]"
+    },
+    
+    "storageAccountType": "Premium_LRS",
+    "dataDiskSizes": {
+      "Large": 1023,
+      "Medium": 512,
+      "Small": 128
+    },
+    "numberOfDataDisks": "[parameters('vmDataDiskCount')]",
+    "storageAccountsCount": "1",
+    "nodesPerStorageAccount": "40",
+    
     "esToKibanaMapping": {
       "6.2.1": "6.2.1",
       "6.2.2": "6.2.2"
     },
+    "kibanaHttps": "[if(and(greater(length(parameters('kibanaKeyBlob')), 0), greater(length(parameters('kibanaCertBlob')), 0)), 'Yes', 'No')]",
+
     "esSettings": {
-      "clusterName": "[parameters('esClusterName')]",
+      "clusterName": "[concat(parameters('namespacePrefix'), 'cluster')]",
       "version": "[parameters('esVersion')]",
       "installPlugins": "[parameters('xpackPlugins')]",
       "installAdditionalPlugins": "[parameters('esAdditionalPlugins')]",
@@ -342,337 +340,9 @@
       "securityBootstrapPwd": "[if(not(empty(parameters('securityBootstrapPassword'))),parameters('securityBootstrapPassword'),uniqueString(resourceGroup().id, deployment().name, parameters('securityAdminPassword')))]",
       "kibanaVersion": "[variables('esToKibanaMapping')[parameters('esVersion')]]"
     },
-    "dataSkuSettings": {
-      "Standard_A0": {
-        "dataDisks": 1,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A1": {
-        "dataDisks": 2,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A2": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A3": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A4": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A5": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A6": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_A7": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D1": {
-        "dataDisks": 2,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D2": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D3": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D4": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D11": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D12": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D13": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D14": {
-        "dataDisks": 32,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D1_v2": {
-        "dataDisks": 2,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D2_v2": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D3_v2": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D4_v2": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D5_v2": {
-        "dataDisks": 32,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D11_v2": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D12_v2": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D13_v2": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D14_v2": {
-        "dataDisks": 32,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D15_v2": {
-        "dataDisks": 40,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_D2S_v3": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_B2S": {
-        "dataDisks": 2,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS1": {
-        "dataDisks": 2,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS2": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS3": {
-        "dataDisks": 8,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS4": {
-        "dataDisks": 16,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS11": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS12": {
-        "dataDisks": 8,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS13": {
-        "dataDisks": 16,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS14": {
-        "dataDisks": 32,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS1_v2": {
-        "dataDisks": 2,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS2_v2": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS3_v2": {
-        "dataDisks": 8,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS4_v2": {
-        "dataDisks": 16,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS5_v2": {
-        "dataDisks": 32,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS11_v2": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS12_v2": {
-        "dataDisks": 8,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS13_v2": {
-        "dataDisks": 16,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS14_v2": {
-        "dataDisks": 32,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_DS15_v2": {
-        "dataDisks": 40,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_F1": {
-        "dataDisks": 2,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_F2": {
-        "dataDisks": 4,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_F4": {
-        "dataDisks": 8,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_F8": {
-        "dataDisks": 16,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_F16": {
-        "dataDisks": 32,
-        "storageAccountType": "Standard_LRS"
-      },
-      "Standard_F1s": {
-        "dataDisks": 2,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_F2s": {
-        "dataDisks": 4,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_F4s": {
-        "dataDisks": 8,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_F8s": {
-        "dataDisks": 16,
-        "storageAccountType": "Premium_LRS"
-      },
-      "Standard_F16s": {
-        "dataDisks": 32,
-        "storageAccountType": "Premium_LRS"
-      }
-    },
-    "dataDiskSizes": {
-      "Large": 1023,
-      "Medium": 512,
-      "Small": 128
-    },
-    "backendPoolConfigurations": {
-      "internal": [
-        {
-          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namePrefix'), 'int-lb')),'/backendAddressPools/LBBE')]"
-        }
-      ],
-      "external": [
-        {
-          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namePrefix'), 'int-lb')),'/backendAddressPools/LBBE')]"
-        },
-        {
-          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namePrefix'), 'ext-lb')),'/backendAddressPools/LBBE')]"
-        }
-      ],
-      "gateway": [
-        {
-          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('namePrefix'), 'int-lb')),'/backendAddressPools/LBBE')]"
-        }
-      ]
-    },
-    "lbBackEndPoolsAdded": {
-      "backendPools": "[variables('backendPoolConfigurations')[parameters('loadBalancerType')]]"
-    },
-    "lbBackendPoolsRemoved": {
-      "backendPools": []
-    },
-    "dataLoadBalancerOptions": [
-      "[variables('lbBackEndPoolsAdded')]",
-      "[variables('lbBackEndPoolsRemoved')]"
-    ],
-    "clientResourceIndex": "[mod(add(parameters('vmClientNodeCount'),2),add(parameters('vmClientNodeCount'),1))]",
-    "nodesPerStorageMapping": {
-      "Standard_LRS_Small_1": 40,
-      "Standard_LRS_Small_2": 20,
-      "Standard_LRS_Small_4": 10,
-      "Standard_LRS_Small_8": 5,
-      "Standard_LRS_Small_16": 2,
-      "Standard_LRS_Small_32": 1,
-      "Standard_LRS_Small_40": 1,
-      "Standard_LRS_Small_0": 0,
-      "Standard_LRS_Medium_1": 40,
-      "Standard_LRS_Medium_2": 20,
-      "Standard_LRS_Medium_4": 10,
-      "Standard_LRS_Medium_8": 5,
-      "Standard_LRS_Medium_16": 2,
-      "Standard_LRS_Medium_32": 1,
-      "Standard_LRS_Medium_40": 1,
-      "Standard_LRS_Medium_0": 0,
-      "Standard_LRS_Large_1": 40,
-      "Standard_LRS_Large_2": 20,
-      "Standard_LRS_Large_4": 10,
-      "Standard_LRS_Large_8": 5,
-      "Standard_LRS_Large_16": 2,
-      "Standard_LRS_Large_32": 1,
-      "Standard_LRS_Large_40": 1,
-      "Standard_LRS_Large_0": 0,
-      "Premium_LRS_Small_1": 250,
-      "Premium_LRS_Small_2": 125,
-      "Premium_LRS_Small_4": 62,
-      "Premium_LRS_Small_8": 31,
-      "Premium_LRS_Small_16": 15,
-      "Premium_LRS_Small_32": 7,
-      "Premium_LRS_Small_40": 6,
-      "Premium_LRS_Small_0": 0,
-      "Premium_LRS_Medium_1": 60,
-      "Premium_LRS_Medium_2": 30,
-      "Premium_LRS_Medium_4": 15,
-      "Premium_LRS_Medium_8": 7,
-      "Premium_LRS_Medium_16": 3,
-      "Premium_LRS_Medium_32": 1,
-      "Premium_LRS_Medium_40": 1,
-      "Premium_LRS_Medium_0": 0,
-      "Premium_LRS_Large_1": 34,
-      "Premium_LRS_Large_2": 17,
-      "Premium_LRS_Large_4": 8,
-      "Premium_LRS_Large_8": 4,
-      "Premium_LRS_Large_16": 2,
-      "Premium_LRS_Large_32": 1,
-      "Premium_LRS_Large_40": 1,
-      "Premium_LRS_Large_0": 0
-    },
-    "storageAccountOverrides": {
-      "Default": "[variables('dataSkuSettings')[parameters('vmSizeDataNodes')].storageAccountType]",
-      "Standard": "Standard_LRS",
-      "Premium": "Premium_LRS"
-    },
-    "resolvedStorageAccountType": "[variables('storageAccountOverrides')[parameters('storageAccountType')]]",
-    "tmpVmSizeDataDisks": "[variables('dataSkuSettings')[parameters('vmSizeDataNodes')].dataDisks]",
-    "dataDiskOptions": [
-      "[parameters('vmDataDiskCount')]",
-      "[variables('tmpVmSizeDataDisks')]"
-    ],
-    "smallestDataDiskOption": "[min(variables('dataDiskOptions'))]",
-    "numberOfDataDisks": "[div(add(add(0, variables('smallestDataDiskOption')), int(replace(string(sub(0, variables('smallestDataDiskOption'))), '-', ''))), 2)]",
-    "nodesPerStorageAccount": "[variables('nodesPerStorageMapping')[concat(variables('resolvedStorageAccountType'), '_', parameters('vmDataDiskSize'), '_', string(variables('numberOfDataDisks')))]]",
-    "nodesPerStorageAccountDiv": "[div(add(add(1, variables('nodesPerStorageAccount')), int(replace(string(sub(1, variables('nodesPerStorageAccount'))), '-', ''))), 2)]",
-    "storageAccountsCount": "[add(div(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')), mod(add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),2), add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),1)))]",
-    "kibanaHttps": "[if(and(greater(length(parameters('kibanaKeyBlob')), 0), greater(length(parameters('kibanaCertBlob')), 0)), 'Yes', 'No')]",
+
     "topologySettings": {
-      "namespacePrefix": "[parameters('namePrefix')]",
+      "namespacePrefix": "[parameters('namespacePrefix')]",
       "dataNodesAreMasterEligible": "[parameters('dataNodesAreMasterEligible')]",
       "vmDataNodeCount": "[parameters('vmDataNodeCount')]",
       "vmSizeDataNodes": "[parameters('vmSizeDataNodes')]",
@@ -689,16 +359,16 @@
       "dataNodeStorageSettings": {
         "count": "[variables('storageAccountsCount')]",
         "nodesPerStorageAccount": "[variables('nodesPerStorageAccount')]",
-        "accountType": "[variables('resolvedStorageAccountType')]",
+        "accountType": "[variables('storageAccountType')]",
         "diskSize": "[variables('dataDiskSizes')[parameters('vmDataDiskSize')]]",
         "dataDisks": "[variables('numberOfDataDisks')]"
       },
-      "dataLoadBalancerBackEndPools": "[if(variables('createCluster'), variables('dataLoadBalancerOptions')[variables('clientResourceIndex')].backendPools, variables('emptyArray'))]",
-      "loadBalancerBackEndPools": "[if(variables('createCluster'), variables('lbBackEndPoolsAdded').backendPools, variables('emptyArray'))]",
+      "dataLoadBalancerBackEndPools": "[variables('lbBackEndPools').backendPools)]",
       "enableAnonymousAccess": "[parameters('esEnableAnonymousAccess')]"
     },
+
     "networkSettings": {
-      "namespacePrefix": "[parameters('namePrefix')]",
+      "namespacePrefix": "[parameters('namespacePrefix')]",
       "name": "[parameters('vNetName')]",
       "resourceGroup": "[parameters('vNetResourceGroup')]",
       "location": "[variables('location')]",
@@ -707,17 +377,16 @@
         "loadbalancerIp": "[parameters('vNetLoadBalancerIp')]"
       }
     },
+
     "commonVmSettings": {
       "createCluster": "[variables('createCluster')]",
-      "namespacePrefix": "[parameters('namePrefix')]",
+      "namespacePrefix": "[parameters('namespacePrefix')]",
       "location": "[variables('location')]",
       "subnet": "[variables('networkSettings').subnet]",
       "subnetId": "[concat(resourceId(variables('networkSettings').resourceGroup, 'Microsoft.Network/virtualNetworks', variables('networkSettings').name), '/subnets/', variables('networkSettings').subnet.name)]",
       "credentials": {
         "adminUsername": "[parameters('adminUsername')]",
-        "password": "[parameters('adminPassword')]",
-        "authenticationType": "[parameters('authenticationType')]",
-        "sshPublicKey": "[parameters('sshPublicKey')]"
+        "password": "[parameters('adminPassword')]"
       }
     }
   },
@@ -726,10 +395,7 @@
       "condition": "[variables('createCluster')]",
       "name": "loadbalancer",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'network')]"
-      ],
+      "apiVersion": "2017-03-30",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -739,55 +405,16 @@
         "parameters": {
           "networkSettings": {
             "value": "[variables('networkSettings')]"
-          },
-          "applicationGatewaySettings": {
-            "value": "[variables('applicationGatewaySettings')]"
-          }
-        }
-      }
-    },
-    {
-      "condition": "[variables('createCluster')]",
-      "name": "virtual-machines-cluter",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('osSettingsTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
-          },
-          "esSettings": {
-            "value": "[variables('esSettings')]"
-          },
-          "commonVmSettings": {
-            "value": "[variables('commonVmSettings')]"
-          },
-          "topologySettings": {
-            "value": "[variables('topologySettings')]"
-          },
-          "networkSettings": {
-            "value": "[variables('networkSettings')]"
           }
         }
       }
     },
     {
       "condition": "[not(variables('createCluster'))]",
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-03-30",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('namePrefix'), 'data-vm0-nic')]",
+      "name": "[concat(parameters('namespacePrefix'), 'data-vm1-nic')]",
       "location": "[variables('commonVmSettings').location]",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'network')]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
@@ -798,6 +425,8 @@
               "subnet": {
                 "id": "[variables('commonVmSettings').subnetId]"
               },
+              "primary": true,
+              "privateIPAddressVersion": "IPv4",
               "loadBalancerBackendAddressPools": "[variables('topologySettings').dataLoadBalancerBackEndPools]"
             }
           }
@@ -805,12 +434,12 @@
       }
     },
     {
-      "condition": "[not(variables('createCluster'))]",
       "name": "virtual-machines",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
+      "apiVersion": "2017-03-30",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('namePrefix'), 'data-vm0-nic')]"
+        "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespacePrefix'), 'data-vm1-nic')]"
       ],
       "properties": {
         "mode": "Incremental",

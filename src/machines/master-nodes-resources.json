@@ -57,7 +57,7 @@
             "value": "[concat(variables('namespace'), 'as')]"
           },
           "index": {
-            "value": "[copyindex()]"
+            "value": "[copyindex() + 1]"
           }
         }
       }

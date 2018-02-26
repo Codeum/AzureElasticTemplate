@@ -62,25 +62,14 @@
     "computername": "[concat(parameters('namespace'), 'vm')]",
     "subnetId": "[concat(resourceId(parameters('networkSettings').resourceGroup, 'Microsoft.Network/virtualNetworks', parameters('networkSettings').name), '/subnets/', parameters('networkSettings').subnet.name)]",
     "nicName": "[concat(variables('computername'), '-nic')]",
-    "password_osProfile": {
+    "osProfile": {
       "computername": "[variables('computername')]",
       "adminUsername": "[parameters('credentials').adminUsername]",
-      "adminPassword": "[parameters('credentials').password]"
-    },
-    "sshPublicKey_osProfile": {
-      "computername": "[variables('computername')]",
-      "adminUsername": "[parameters('credentials').adminUsername]",
+      "adminPassword": "[parameters('credentials').password]",
       "linuxConfiguration": {
-        "disablePasswordAuthentication": "true",
-        "ssh": {
-          "publicKeys": [ {
-            "path": "[concat('/home/', parameters('credentials').adminUsername, '/.ssh/authorized_keys')]",
-            "keyData": "[parameters('credentials').sshPublicKey]"
-          } ]
-        }
+        "disablePasswordAuthentication": false
       }
     },
-    "osProfile": "[variables(concat(parameters('credentials').authenticationType, '_osProfile'))]",
     "httpsOpts": {
       "Yes" : "https://",
       "No" : "http://"
@@ -103,7 +92,9 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('subnetId')]"
-              }
+              },
+              "primary": true,
+              "privateIPAddressVersion": "IPv4"
             }
           }
         ]
@@ -125,9 +116,13 @@
         "storageProfile": {
           "imageReference": "[parameters('osSettings').imageReference]",
           "osDisk": {
+            "osType": "Linux",
             "name": "osdisk",
             "caching": "ReadWrite",
-            "createOption": "FromImage"
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
           }
         },
         "networkProfile": {

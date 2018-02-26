@@ -7,17 +7,11 @@
       "metadata": {
         "description": "Network settings object"
       }
-    },
-    "applicationGatewaySettings": {
-      "type": "object",
-      "metadata": {
-        "description": "Application Gateway settings"
-      }
     }
   },
   "resources": [
     {
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-03-30",
       "name": "[concat(parameters('networkSettings').namespacePrefix, '-int-lb')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('networkSettings').location]",
@@ -90,9 +84,9 @@
       }
     },
     {
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-03-30",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip')]",
+      "name": "[concat(parameters('networkSettings').namespacePrefix, '-ext-lb-pip')]",
       "location": "[parameters('networkSettings').location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
@@ -107,7 +101,7 @@
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('networkSettings').location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('networkSettings').namespacePrefix, '-ext-lb-ip'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('networkSettings').namespacePrefix, '-ext-lb-pip'))]"
       ],
       "properties": {
         "frontendIPConfigurations": [
@@ -115,7 +109,7 @@
             "name": "LBFE",
             "properties": {
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-pip'))]"
               }
             }
           }
@@ -130,10 +124,10 @@
             "name": "es-http-external",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip')),'/frontendIPConfigurations/LBFE')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb')),'/frontendIPConfigurations/LBFE')]"
               },
               "backendAddressPool": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip')),'/backendAddressPools/LBBE')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb')),'/backendAddressPools/LBBE')]"
               },
               "protocol": "Tcp",
               "frontendPort": 9200,
@@ -141,7 +135,7 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip')),'/probes/es-http-external-probe')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', concat(parameters('networkSettings').namespacePrefix, '-ext-lb')),'/probes/es-http-external-probe')]"
               }
             }
           }
@@ -159,11 +153,5 @@
         ]
       }
     }
-  ],
-  "outputs" : {
-    "fqdn": {
-      "value": "[concat('http://', reference(resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('networkSettings').namespacePrefix, '-ext-lb-ip')), '2016-03-30').dnsSettings.fqdn, ':9200')]",
-      "type": "string"
-    }
-  }
+  ]
 }
