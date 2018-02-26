@@ -30,10 +30,13 @@
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[concat(variables('namespace'), 'as')]",
       "location": "[parameters('vm').shared.location]",
+      "sku": {
+        "name": "Aligned"
+      },
+      "scale": null,
       "properties": {
-        "platformUpdateDomainCount": 20,
-        "platformFaultDomainCount": 3,
-        "managed": true
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 2
       }
     },
     {
