@@ -73,7 +73,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 0,
                   "managedDisk": {
-                    "storageAccountType": "[variables('storageSettings').accountType]"
+                    "storageAccountType": "[parameters('storageSettings').accountType]"
                   },
                   "caching": "None",
                   "createOption": "Empty"
@@ -83,7 +83,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 1,
                   "managedDisk": {
-                    "storageAccountType": "[variables('storageSettings').accountType]"
+                    "storageAccountType": "[parameters('storageSettings').accountType]"
                   },
                   "caching": "None",
                   "createOption": "Empty"
@@ -93,7 +93,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 2,
                   "managedDisk": {
-                    "storageAccountType": "[variables('storageSettings').accountType]"
+                    "storageAccountType": "[parameters('storageSettings').accountType]"
                   },
                   "caching": "None",
                   "createOption": "Empty"
@@ -103,7 +103,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 3,
                   "managedDisk": {
-                    "storageAccountType": "[variables('storageSettings').accountType]"
+                    "storageAccountType": "[parameters('storageSettings').accountType]"
                   },
                   "caching": "None",
                   "createOption": "Empty"

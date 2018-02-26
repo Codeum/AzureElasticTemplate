@@ -92,7 +92,7 @@
           "imageReference": "[parameters('vm').imageReference]",
           "osDisk": {
             "osType": "Linux",
-            "name": "osdisk",
+            "name": "[concat(variables('computername'), '-osdisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "managedDisk": {

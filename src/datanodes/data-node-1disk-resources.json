@@ -73,7 +73,7 @@
                   "diskSizeGB": "[parameters('storageSettings').diskSize]",
                   "lun": 0,
                   "managedDisk": {
-                    "storageAccountType": "[variables('storageSettings').accountType]"
+                    "storageAccountType": "[parameters('storageSettings').accountType]"
                   },
                   "caching": "None",
                   "createOption": "Empty"
