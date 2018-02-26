@@ -281,9 +281,7 @@
     "createCluster": "[not(equals(parameters('loadBalancerType'), 'none'))]",
     "templateBaseUrl": "[concat(parameters('artifactsBaseUrl'), '/')]",
     "osSettingsTemplateUrl": "[concat(variables('templateBaseUrl'), 'settings/ubuntuSettings.json')]",
-
     "location": "[parameters('location')]",
-
     "loadBalancerOptions": {
       "internal": "internal-lb-resources",
       "external": "external-lb-resources",
@@ -309,7 +307,6 @@
     "lbBackEndPools": {
       "backendPools": "[variables('backendPoolConfigurations')[parameters('loadBalancerType')]]"
     },
-    
     "storageAccountType": "Premium_LRS",
     "dataDiskSizes": {
       "Large": 1023,
@@ -317,15 +314,40 @@
       "Small": 128
     },
     "numberOfDataDisks": "[parameters('vmDataDiskCount')]",
-    "storageAccountsCount": "1",
-    "nodesPerStorageAccount": "40",
-    
+    "nodesPerStorageMapping": {
+      "Premium_LRS_Small_1": 250,
+      "Premium_LRS_Small_2": 125,
+      "Premium_LRS_Small_4": 62,
+      "Premium_LRS_Small_8": 31,
+      "Premium_LRS_Small_16": 15,
+      "Premium_LRS_Small_32": 7,
+      "Premium_LRS_Small_40": 6,
+      "Premium_LRS_Small_0": 0,
+      "Premium_LRS_Medium_1": 60,
+      "Premium_LRS_Medium_2": 30,
+      "Premium_LRS_Medium_4": 15,
+      "Premium_LRS_Medium_8": 7,
+      "Premium_LRS_Medium_16": 3,
+      "Premium_LRS_Medium_32": 1,
+      "Premium_LRS_Medium_40": 1,
+      "Premium_LRS_Medium_0": 0,
+      "Premium_LRS_Large_1": 34,
+      "Premium_LRS_Large_2": 17,
+      "Premium_LRS_Large_4": 8,
+      "Premium_LRS_Large_8": 4,
+      "Premium_LRS_Large_16": 2,
+      "Premium_LRS_Large_32": 1,
+      "Premium_LRS_Large_40": 1,
+      "Premium_LRS_Large_0": 0
+    },
+    "nodesPerStorageAccount": "[variables('nodesPerStorageMapping')[concat(variables('storageAccountType'), '_', parameters('vmDataDiskSize'), '_', string(variables('numberOfDataDisks')))]]",
+    "nodesPerStorageAccountDiv": "[div(add(add(1, variables('nodesPerStorageAccount')), int(replace(string(sub(1, variables('nodesPerStorageAccount'))), '-', ''))), 2)]",
+    "storageAccountsCount": "[add(div(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')), mod(add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),2), add(mod(parameters('vmDataNodeCount'), variables('nodesPerStorageAccountDiv')),1)))]",
     "esToKibanaMapping": {
       "6.2.1": "6.2.1",
       "6.2.2": "6.2.2"
     },
     "kibanaHttps": "[if(and(greater(length(parameters('kibanaKeyBlob')), 0), greater(length(parameters('kibanaCertBlob')), 0)), 'Yes', 'No')]",
-
     "esSettings": {
       "clusterName": "[concat(parameters('namespacePrefix'), 'cluster')]",
       "version": "[parameters('esVersion')]",
@@ -340,7 +362,6 @@
       "securityBootstrapPwd": "[if(not(empty(parameters('securityBootstrapPassword'))),parameters('securityBootstrapPassword'),uniqueString(resourceGroup().id, deployment().name, parameters('securityAdminPassword')))]",
       "kibanaVersion": "[variables('esToKibanaMapping')[parameters('esVersion')]]"
     },
-
     "topologySettings": {
       "namespacePrefix": "[parameters('namespacePrefix')]",
       "dataNodesAreMasterEligible": "[parameters('dataNodesAreMasterEligible')]",
@@ -366,7 +387,6 @@
       "dataLoadBalancerBackEndPools": "[variables('lbBackEndPools').backendPools)]",
       "enableAnonymousAccess": "[parameters('esEnableAnonymousAccess')]"
     },
-
     "networkSettings": {
       "namespacePrefix": "[parameters('namespacePrefix')]",
       "name": "[parameters('vNetName')]",
@@ -377,7 +397,6 @@
         "loadbalancerIp": "[parameters('vNetLoadBalancerIp')]"
       }
     },
-
     "commonVmSettings": {
       "createCluster": "[variables('createCluster')]",
       "namespacePrefix": "[parameters('namespacePrefix')]",

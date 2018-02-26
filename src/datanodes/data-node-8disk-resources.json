@@ -23,7 +23,6 @@
   },
   "variables": {
     "namespace": "[parameters('vm').namespace]",
-    "avSetCount": "[add(div(sub(parameters('vm').count, 1), 100), 1)]",
     "nodesPerStorageAccount": "[parameters('storageSettings').nodesPerStorageAccount]",
     "storageAccountPrefix": [
       "0",
@@ -70,12 +69,8 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "[concat(variables('namespace'), 'as', copyindex())]",
+      "name": "[concat(variables('namespace'), 'as')]",
       "location": "[parameters('vm').shared.location]",
-      "copy": {
-        "name": "[concat(variables('namespace'),'av-loop')]",
-        "count": "[variables('avSetCount')]"
-      },
       "properties": {
         "platformUpdateDomainCount": 20,
         "platformFaultDomainCount": 3
@@ -101,7 +96,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
-        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'as', mod(copyindex(),variables('avSetCount')))]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('namespace'), 'as')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountPrefix')[mod(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('storageAccountPrefix')[div(div(copyIndex(),variables('nodesPerStorageAccount')),variables('storageAccountPrefixCount'))],variables('newStorageAccountNamePrefix'),add(1,div(copyIndex(),variables('nodesPerStorageAccount'))))]"
       ],
       "copy": {
@@ -125,7 +120,7 @@
             "value": "[copyindex()]"
           },
           "availabilitySet": {
-            "value": "[concat(variables('namespace'), 'as', mod(copyindex(),variables('avSetCount')))]"
+            "value": "[concat(variables('namespace'), 'as')]"
           },
           "dataDisks": {
             "value": {
